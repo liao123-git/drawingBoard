@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Draw Broad</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery-3.2.1.js"></script>
+</head>
+<body class="bg">
+    <header class="bg border">
+        <img src="images/decorate.png" alt="" class="decorate">
+        <div class="readout"><span>(x,y)</span></div>
+        <div class="rotate hover"><div class="check"></div> <span>Rotate</span></div>
+        <div class="export hover"><span>Export</span></div>
+    </header>
+    <main>
+        <aside class="tools bg border">
+            <img src="images/decorate.png" alt="" class="decorate">
+            <ul>
+                <li class="grid hover" title="网格工具">
+                    <img src="images/grid.png" alt="">
+                </li>
+                <li class="line hover" title="直线工具">
+                    <img src="images/line.png" alt="">
+                </li>
+                <li class="rectangle hover" title="矩形工具">
+                    <img src="images/rectangle.png" alt="">
+                </li>
+                <li class="round hover" title="圆工具">
+                    <img src="images/round.png" alt="">
+                </li>
+                <li class="eraser hover" title="橡皮擦工具">
+                    <img src="images/eraser.png" alt="">
+                </li>
+                <li class="text hover" title="文字工具">
+                    <img src="images/text.png" alt="">
+                </li>
+                <li class="pen hover" title="钢笔工具">
+                    <img src="images/pen.png" alt="">
+                </li>
+                <li class="magnifier hover" title="放大镜工具">
+                    <img src="images/magnifier.png" alt="">
+                </li>
+                <li class="intersection hover" title="交集、补集、并集">
+                    <img src="images/intersection.png" alt="">
+                </li>
+                <li class="polygon hover" title="多边形">
+                    <img src="images/polygon.png" alt="">
+                </li>
+            </ul>
+        </aside>
+        <article class="board border">
+            <div class="createContent">
+                <div class="title"><span>New Document</span></div>
+                <form id="createContent">
+                    <div>
+                        <label for="width">Width</label>
+                        <div>
+                            <input type="text" class="width" name="width" id="width" required>
+                        <select>
+                            <option>Pixels</option>
+                        </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="height">Height</label>
+                        <div>
+                            <input type="text" class="height" name="height" id="height" required>
+                        <select>
+                            <option>Pixels</option>
+                        </select>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn create">Create</button>
+                        <input type="reset" class="btn" value="Rest">
+                    </div>
+                </form>
+            </div>
+            <div class="contentBg">
+                <div class="content" id="board">
+                    <canvas id="layer1"></canvas>
+                </div>
+            </div>
+        </article>
+        <aside class="layers bg border">
+            <div class="content bg border">
+                <div class="title">
+                    <div>
+                        <span>Layers</span>
+                    </div>
+                    <div></div>
+                </div>
+                <div class="scroll">
+                    <ul>
+                        <!--<li class="layer hover">
+                            <div class="watch"><div class="check"></div></div>
+                            <div>
+                                <div class="show-layer"></div>
+                                <span class="layer-name">Layer 1</span>
+                            </div>
+                        </li>-->
+                    </ul>
+                </div>
+                <div class="buttons">
+                    <div title="新建图层"><img src="images/duplicate.png" alt=""></div>
+                    <div title="删除图层"><img src="images/trash.png" alt=""></div>
+                </div>
+            </div>
+        </aside>
+    </main>
+<script>
+    $(()=>{
+        let data = [],
+            dom = $("#board"),
+            domBg = $(".contentBg");
+        $("#createContent").submit(function(e){
+            e.preventDefault();
+            data = $(this).serializeArray();
+            dom.css({
+                width: `${data[0].value}px`,
+                height: `${data[1].value}px`,
+            });
+            domBg.css({
+                width: `${parseInt(data[0].value)+400}px`,
+                height: `${parseInt(data[1].value)+400}px`,
+            });
+            $('.createContent').hide();
+            window.setInterval(()=>{
+                let board = $(".board");
+                if(parseInt(data[0].value)+400>board.width()&&parseInt(data[1].value)+400>board.height()){
+                    domBg.removeClass('case2').removeClass('case3').addClass('case1');
+                }
+                else if(parseInt(data[1].value)+400>board.height())
+                    domBg.removeClass('case1').removeClass('case2').addClass('case3');
+                else
+                    domBg.removeClass('case1').removeClass('case3').addClass('case2');
+            },33);
+        });
+    });
+</script>
+</body>
+</html>
