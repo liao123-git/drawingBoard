@@ -269,7 +269,7 @@ form>div:last-child{
     align-items: center;
     justify-content: center;
 }
-.buttons>div:hover,.tools li:hover{
+.buttons>div:hover,.tools li:nth-last-child(n+2):hover,.tools li.active{
     border: 1px solid #757575;
     cursor: pointer;
     background: #4b4b4b;
@@ -301,4 +301,8 @@ form>div:last-child{
     width: 0;
     height: 0;
     background: url("../images/bg.png");
+}
+.color input{
+    width: 20px;
+    border: none;
 }

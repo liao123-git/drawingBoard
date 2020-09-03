@@ -17,16 +17,16 @@
         <aside class="tools bg border">
             <img src="images/decorate.png" alt="" class="decorate">
             <ul>
-                <li class="grid hover" title="网格工具">
+                <li class="grid hover" id="grid" title="网格工具">
                     <img src="images/grid.png" alt="">
                 </li>
-                <li class="line hover" title="直线工具">
+                <li class="line hover" id="line" title="直线工具">
                     <img src="images/line.png" alt="">
                 </li>
-                <li class="rectangle hover" title="矩形工具">
+                <li class="rectangle hover" id="rect" title="矩形工具">
                     <img src="images/rectangle.png" alt="">
                 </li>
-                <li class="round hover" title="圆工具">
+                <li class="round hover" id="circular" title="圆工具">
                     <img src="images/round.png" alt="">
                 </li>
                 <li class="eraser hover" title="橡皮擦工具">
@@ -46,6 +46,9 @@
                 </li>
                 <li class="polygon hover" title="多边形">
                     <img src="images/polygon.png" alt="">
+                </li>
+                <li class="color hover" title="选择颜色">
+                    <input type="color" id="color">
                 </li>
             </ul>
         </aside>
@@ -79,7 +82,6 @@
             </div>
             <div class="contentBg">
                 <div class="content" id="board">
-                    <canvas id="layer1"></canvas>
                 </div>
             </div>
         </article>
@@ -103,8 +105,8 @@
                     </ul>
                 </div>
                 <div class="buttons">
-                    <div title="新建图层"><img src="images/duplicate.png" alt=""></div>
-                    <div title="删除图层"><img src="images/trash.png" alt=""></div>
+                    <div title="新建图层" id="new"><img src="images/duplicate.png" alt=""></div>
+                    <div title="删除图层" id="delete"><img src="images/trash.png" alt=""></div>
                 </div>
             </div>
         </aside>
@@ -114,6 +116,10 @@
         let data = [],
             dom = $("#board"),
             domBg = $(".contentBg");
+        let position = false;
+        let state = false;
+        let color = "black";
+
         $("#createContent").submit(function(e){
             e.preventDefault();
             data = $(this).serializeArray();
@@ -136,7 +142,74 @@
                 else
                     domBg.removeClass('case1').removeClass('case3').addClass('case2');
             },33);
+            setEvent();
         });
+
+        let canvasList = [];
+        $("#new").click(()=>{
+            let num = canvasList.length?canvasList[canvasList.length-1].num-1:1;
+            let canvas = $(`<canvas id="layer${num}" width="${data[0].value}" height="${data[1].value}"></canvas>`);
+            let layer =  $(`<li class="layer hover"><div class="watch"><div class="check"></div></div><div><div class="show-layer"></div><span class="layer-name">Layer ${num}</span></div></li>`);
+            dom.append(canvas);
+            $(".scroll").prepend(layer);
+            mouseEvent(canvas[0]);
+        });
+        function drawRect(ctx,x,y,w,h){
+            ctx.fillRect(x,y,w,h);
+        }
+        function drawLine(ctx,x,y){
+            ctx.beginPath();
+            ctx.moveTo(position.x,position.y);
+            ctx.lineTo(x,y);
+            ctx.stroke();
+            ctx.closePath();
+        }
+        function drawCircular(ctx,x,y,r){
+            ctx.beginPath();
+            ctx.arc(x,y,r,0,Math.PI*2,true);
+            ctx.fill();
+            ctx.closePath();
+        }
+        function mouseEvent(canvas){
+            let ctx = canvas.getContext('2d');
+            canvas.onmousedown = ()=>{
+                position = {x:event.layerX,y:event.layerY};
+            };
+            canvas.onmousemove = ()=>{
+                if(!position||!state) return;
+                let x = event.layerX;
+                let y = event.layerY;
+                let w = x-position.x;
+                let h = y-position.y;
+                ctx.fillStyle = color;
+                ctx.strokeStyle = color;
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                switch (state) {
+                    case 'rect':
+                        drawRect(ctx,position.x,position.y,w,h);
+                        break;
+                    case 'line':
+                        drawLine(ctx,x,y);
+                        break;
+                    case 'circular':
+                        drawCircular(ctx,position.x,position.y,Math.abs(w)>Math.abs(h)?Math.abs(w):Math.abs(h));
+                        break;
+                }
+            };
+            canvas.onmouseup = ()=>{
+                position = false;
+            };
+        }
+        function setEvent(){
+            $(".tools li:nth-last-child(n+2)").click(function(){
+                if(position) return;
+                state = $(this)[0].id;
+                $(this).addClass('active').siblings().removeClass('active');
+            });
+            $("#color").change(function(){
+                color = $(this).val();
+            });
+        }
     });
 </script>
 </body>
