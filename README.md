@@ -1,13 +1,13 @@
 # Draw Board
 
-Draw Board主要目标是类似ps的画板。
+Draw Board主要目标是制作一个类似ps的画板。在线演示：https://liao123-git.github.io/drawingBoard/drawBoard/ 。
 
 ## 任务清单
 
 - [x] 完成页面布局
-- [ ] 绘制基本图形
-    - [ ] 设置参数绘制
-    - [ ] 鼠标拖动设置
+- [x] 绘制基本图形
+    - [x] 设置参数绘制
+    - [x] 鼠标拖动绘制
 - [ ] 转为面向对象
 - [ ] 开发图层
 - [ ] 开发各个工具
