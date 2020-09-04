@@ -5,12 +5,20 @@
     <title>Draw Broad</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="js/jquery-3.2.1.js"></script>
+    <script src="js/Data.js"></script>
+    <script src="js/Main.js"></script>
+    <script src="js/Layers.js"></script>
+    <script src="js/Layer.js"></script>
+    <script src="js/Rect.js"></script>
+    <script src="js/Line.js"></script>
+    <script src="js/Circular.js"></script>
 </head>
 <body class="bg">
     <header class="bg border">
         <img src="images/decorate.png" alt="" class="decorate">
         <div class="readout"><span>(x,y)</span></div>
         <div class="rotate hover"><div class="check"></div> <span>Rotate</span></div>
+        <div class="stroke hover"><div class="check"></div> <span>Stroke</span></div>
         <div class="export hover"><span>Export</span></div>
     </header>
     <main>
@@ -82,6 +90,8 @@
             </div>
             <div class="contentBg">
                 <div class="content" id="board">
+                    <canvas id="image"></canvas>
+                    <canvas id="board_c"></canvas>
                 </div>
             </div>
         </article>
@@ -111,106 +121,5 @@
             </div>
         </aside>
     </main>
-<script>
-    $(()=>{
-        let data = [],
-            dom = $("#board"),
-            domBg = $(".contentBg");
-        let position = false;
-        let state = false;
-        let color = "black";
-
-        $("#createContent").submit(function(e){
-            e.preventDefault();
-            data = $(this).serializeArray();
-            dom.css({
-                width: `${data[0].value}px`,
-                height: `${data[1].value}px`,
-            });
-            domBg.css({
-                width: `${parseInt(data[0].value)+400}px`,
-                height: `${parseInt(data[1].value)+400}px`,
-            });
-            $('.createContent').hide();
-            window.setInterval(()=>{
-                let board = $(".board");
-                if(parseInt(data[0].value)+400>board.width()&&parseInt(data[1].value)+400>board.height()){
-                    domBg.removeClass('case2').removeClass('case3').addClass('case1');
-                }
-                else if(parseInt(data[1].value)+400>board.height())
-                    domBg.removeClass('case1').removeClass('case2').addClass('case3');
-                else
-                    domBg.removeClass('case1').removeClass('case3').addClass('case2');
-            },33);
-            setEvent();
-        });
-
-        let canvasList = [];
-        $("#new").click(()=>{
-            let num = canvasList.length?canvasList[canvasList.length-1].num-1:1;
-            let canvas = $(`<canvas id="layer${num}" width="${data[0].value}" height="${data[1].value}"></canvas>`);
-            let layer =  $(`<li class="layer hover"><div class="watch"><div class="check"></div></div><div><div class="show-layer"></div><span class="layer-name">Layer ${num}</span></div></li>`);
-            dom.append(canvas);
-            $(".scroll").prepend(layer);
-            mouseEvent(canvas[0]);
-        });
-        function drawRect(ctx,x,y,w,h){
-            ctx.fillRect(x,y,w,h);
-        }
-        function drawLine(ctx,x,y){
-            ctx.beginPath();
-            ctx.moveTo(position.x,position.y);
-            ctx.lineTo(x,y);
-            ctx.stroke();
-            ctx.closePath();
-        }
-        function drawCircular(ctx,x,y,r){
-            ctx.beginPath();
-            ctx.arc(x,y,r,0,Math.PI*2,true);
-            ctx.fill();
-            ctx.closePath();
-        }
-        function mouseEvent(canvas){
-            let ctx = canvas.getContext('2d');
-            canvas.onmousedown = ()=>{
-                position = {x:event.layerX,y:event.layerY};
-            };
-            canvas.onmousemove = ()=>{
-                if(!position||!state) return;
-                let x = event.layerX;
-                let y = event.layerY;
-                let w = x-position.x;
-                let h = y-position.y;
-                ctx.fillStyle = color;
-                ctx.strokeStyle = color;
-                ctx.clearRect(0,0,canvas.width,canvas.height);
-                switch (state) {
-                    case 'rect':
-                        drawRect(ctx,position.x,position.y,w,h);
-                        break;
-                    case 'line':
-                        drawLine(ctx,x,y);
-                        break;
-                    case 'circular':
-                        drawCircular(ctx,position.x,position.y,Math.abs(w)>Math.abs(h)?Math.abs(w):Math.abs(h));
-                        break;
-                }
-            };
-            canvas.onmouseup = ()=>{
-                position = false;
-            };
-        }
-        function setEvent(){
-            $(".tools li:nth-last-child(n+2)").click(function(){
-                if(position) return;
-                state = $(this)[0].id;
-                $(this).addClass('active').siblings().removeClass('active');
-            });
-            $("#color").change(function(){
-                color = $(this).val();
-            });
-        }
-    });
-</script>
 </body>
 </html>

@@ -250,12 +250,16 @@ form>div:last-child{
     align-items: center;
     flex: 1;
 }
+.layer>div:last-child.active{
+    background: #6b6b6b;
+}
 .show-layer{
     width: 30px;
     height: 30px;
     border: 1px solid black;
     margin: 0 10px;
-    background: white;
+    background: url("../images/bg.png");
+    background-size: 10px;
 }
 .buttons{
     display: flex;
@@ -296,13 +300,21 @@ form>div:last-child{
     left: 0;
     margin: 0 auto;
 }
-.board .content{
+#board{
     position: relative;
     width: 0;
     height: 0;
     background: url("../images/bg.png");
 }
+#board canvas{
+    position: absolute;
+}
 .color input{
     width: 20px;
     border: none;
+}
+.show-layer>img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
