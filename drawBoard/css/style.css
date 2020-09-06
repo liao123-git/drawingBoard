@@ -6,6 +6,9 @@
     font-size: 12px;
     box-sizing: border-box;
 }
+*:focus{
+    outline: none;
+}
 *::selection{
     display: none;
 }
@@ -206,7 +209,6 @@ form>div:last-child{
 }
 .layers{
     width: calc(10% + 200px);
-    max-height: 924px;
     padding: 1px;
 }
 .content{
@@ -254,6 +256,7 @@ form>div:last-child{
     background: #6b6b6b;
 }
 .show-layer{
+    position: relative;
     width: 30px;
     height: 30px;
     border: 1px solid black;
@@ -304,17 +307,26 @@ form>div:last-child{
     position: relative;
     width: 0;
     height: 0;
-    background: url("../images/bg.png");
 }
 #board canvas{
     position: absolute;
+    background: url("../images/bg.png");
 }
 .color input{
     width: 20px;
     border: none;
 }
 .show-layer>img{
+    position: absolute;
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+#followMouse{
+    width: 50px;
+    padding: 1px 5px;
+    border: 1px solid #7d7d7d;
+    margin-left: 5px;
+    background: #454545;
+    font-size: 12px;
 }

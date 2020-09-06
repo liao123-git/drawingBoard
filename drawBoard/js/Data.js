@@ -8,6 +8,9 @@ class Data {
         this.canvas = $(`#board_c`);
         this.image = $(`#image`);
         this.color = "black";
+        this.eraser = false;
+        this.mouseWidth = 20;
+        this.mousePos = {x:0,y:0};
     }
 }
 $(()=>{

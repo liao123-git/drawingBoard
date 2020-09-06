@@ -12,15 +12,20 @@ class Layer {
         this.stroke = mes.stroke;
         this.category = mes.category;
         this.graphical = null;
+        this.layer = document.createElement('canvas');
+        this.layer.width = data.w;
+        this.layer.height = data.h;
+        this.eraser = false;
+        this.layerInit = false;
         this.init();
     }
 
     init() {
         layers.addLayers(this, this.num);
+        this.changeDomStyle();
         this.addHtml();
         this.setEvent();
         this.createGraphical();
-        layers.showImage();
     }
 
     addHtml() {
@@ -33,13 +38,12 @@ class Layer {
         this.dom.find('>div:last-child').click(() => {
             layers.activeLayer(this.num);
         });
-        this.dom.find('.check').click(function () {
+        this.dom.find('.watch').click(function () {
             that.show = !that.show;
-            console.log(123);
             if (that.show)
-                $(this).addClass('active');
+                $(this).find('.check').addClass('active');
             else
-                $(this).removeClass('active');
+                $(this).find('.check').removeClass('active');
         });
     }
 
@@ -57,34 +61,67 @@ class Layer {
         }
     }
 
-    draw(ctx = false) {
-        ctx = ctx ? ctx : this.ctx;
-        let w = this.x - this.startX;
-        let h = this.y - this.startY;
-        ctx.fillStyle = this.color;
-        ctx.strokeStyle = this.color;
-        switch (this.category) {
-            case 'rect':
-                this.graphical.draw(ctx, this.startX, this.startY, w, h, this.stroke);
-                break;
-            case 'line':
-                this.graphical.draw(ctx, this.startX, this.startY, this.x, this.y);
-                break;
-            case 'circular':
-                this.graphical.draw(ctx, this.startX, this.startY, Math.abs(w) > Math.abs(h) ? Math.abs(w) : Math.abs(h), this.stroke);
-                break;
+    draw() {
+        let layer_ctx = this.layer.getContext('2d');
+        if(!this.layerInit){
+            layer_ctx.clearRect(0,0,data.w,data.h);
+            let w = this.x - this.startX;
+            let h = this.y - this.startY;
+            layer_ctx.fillStyle = this.color;
+            layer_ctx.strokeStyle = this.color;
+            switch (this.category) {
+                case 'rect':
+                    this.graphical.draw(layer_ctx, this.startX, this.startY, w, h, this.stroke);
+                    break;
+                case 'line':
+                    this.graphical.draw(layer_ctx, this.startX, this.startY, this.x, this.y);
+                    break;
+                case 'circular':
+                    this.graphical.draw(layer_ctx, this.startX, this.startY, Math.abs(w) > Math.abs(h) ? Math.abs(w) : Math.abs(h), this.stroke);
+                    break;
+            }
+            this.layerInit = true;
+        }else{
+            if(this.eraser){
+                let v = this.eraser;
+                v.w = data.mouseWidth;
+                layer_ctx.save();
+                layer_ctx.beginPath();
+                if(data.eraser) layer_ctx.arc(v.x,v.y,v.w/2,0,Math.PI*2,false);
+                else layer_ctx.rect(v.x-v.w/2,v.y-v.w/2,v.w,v.w);
+                layer_ctx.clip();
+                layer_ctx.clearRect(0,0,data.w,data.h);
+                layer_ctx.closePath();
+                layer_ctx.restore();
+                this.eraser = false;
+            }
         }
+        this.ctx.drawImage(this.layer,0,0);
     }
 
     changeXY(x, y) {
         this.x = x;
         this.y = y;
+        this.layerInit = false;
     }
 
-    saveImage(canvas) {
-        canvas.toBlob((blob) => {
+    saveImage() {
+        this.layer.toBlob((blob) => {
             let url = URL.createObjectURL(blob);
             this.dom.find('.show-layer>img').attr('src', url);
+        },'image/png',1);
+    }
+
+    changeDomStyle(){
+        let w = data.h>data.w?30/data.h*data.w:30;
+        let h = data.w>data.h?30/data.w*data.h:30;
+        this.dom.find('.show-layer').css({
+            width: w,
+            height: h,
         });
+    }
+
+    addEraser(x,y) {
+        this.eraser = {x, y};
     }
 }

@@ -47,13 +47,30 @@ class Layers {
             if(v.show)
                 v.draw();
         });
+        if(main.gridState) main.grid.draw();
+        this.drawMouse();
+    }
+    addEraser(x,y){
+        this.nowLayers.forEach((v,k)=>{
+            let layer = this.layers.get(k);
+            layer.addEraser(x,y);
+        });
+    }
+    drawMouse(){
+        let x = data.mousePos.x;
+        let y = data.mousePos.y;
+        let w = data.mouseWidth;
+        let ctx = data.canvas[0].getContext('2d');
+        ctx.strokeStyle = 'red';
+        ctx.beginPath();
+        if(data.eraser) ctx.arc(x,y,w/2,0,Math.PI*2,false);
+        else ctx.rect(x-w/2,y-w/2,w,w);
+        ctx.stroke();
+        ctx.closePath();
     }
     showImage(){
         this.layers.forEach((v)=>{
-            let ctx = data.image[0].getContext('2d');
-            ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-            v.draw(ctx);
-            v.saveImage(data.image[0]);
+            v.saveImage();
         });
     }
 }

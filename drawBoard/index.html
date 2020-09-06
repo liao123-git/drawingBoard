@@ -12,22 +12,23 @@
     <script src="js/Rect.js"></script>
     <script src="js/Line.js"></script>
     <script src="js/Circular.js"></script>
+    <script src="js/Grid.js"></script>
 </head>
 <body class="bg">
     <header class="bg border">
         <img src="images/decorate.png" alt="" class="decorate">
-        <div class="readout"><span>(x,y)</span></div>
-        <div class="rotate hover"><div class="check"></div> <span>Rotate</span></div>
-        <div class="stroke hover"><div class="check"></div> <span>Stroke</span></div>
-        <div class="export hover"><span>Export</span></div>
+        <div class="readout" title="坐标"><span>(<span id="x">0</span>,<span id="y">0</span>)</span></div>
+        <div class="mouse hover" title="光标大小"><span>Mouse size: </span><input type="number" id="followMouse" value="20" max="99" min="1"></div>
+        <div class="rotate hover" title="旋转"><div class="check"></div> <span>Rotate</span></div>
+        <div class="grid hover" title="网格工具"><div class="check"></div><span>Grid</span></div>
+        <div class="stroke hover" style="display: none" title="描边"><div class="check"></div> <span>Stroke</span></div>
+        <div class="circular_eraser hover" title="圆形笔刷"><div class="check"></div><span>Circular</span></div>
+        <div class="export hover" title="导出"><span>Export</span></div>
     </header>
     <main>
         <aside class="tools bg border">
             <img src="images/decorate.png" alt="" class="decorate">
             <ul>
-                <li class="grid hover" id="grid" title="网格工具">
-                    <img src="images/grid.png" alt="">
-                </li>
                 <li class="line hover" id="line" title="直线工具">
                     <img src="images/line.png" alt="">
                 </li>
@@ -37,7 +38,7 @@
                 <li class="round hover" id="circular" title="圆工具">
                     <img src="images/round.png" alt="">
                 </li>
-                <li class="eraser hover" title="橡皮擦工具">
+                <li class="eraser hover" id="eraser" title="橡皮擦工具">
                     <img src="images/eraser.png" alt="">
                 </li>
                 <li class="text hover" title="文字工具">
@@ -90,8 +91,8 @@
             </div>
             <div class="contentBg">
                 <div class="content" id="board">
-                    <canvas id="image"></canvas>
-                    <canvas id="board_c"></canvas>
+                    <canvas id="image" width="0" height="0"></canvas>
+                    <canvas id="board_c" width="0" height="0"></canvas>
                 </div>
             </div>
         </article>
