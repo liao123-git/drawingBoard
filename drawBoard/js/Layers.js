@@ -1,8 +1,10 @@
 class Layers {
     constructor(){
         this.num = 0;
+        this.length = 0;
         this.layers = new Map();
         this.nowLayers = new Map();
+        this.backup = [];
     }
     addLayers(layer, num) {
         if (!this.layers.has(num)) this.layers.set(num, layer);
@@ -43,9 +45,10 @@ class Layers {
     drawLayers(){
         let ctx = data.canvas[0].getContext('2d');
         ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-        this.layers.forEach((v)=>{
-            if(v.show)
+        this.layers.forEach((v,k)=>{
+            if(v.show){
                 v.draw();
+            }
         });
         if(main.gridState) main.grid.draw();
         this.drawMouse();
@@ -71,6 +74,37 @@ class Layers {
     showImage(){
         this.layers.forEach((v)=>{
             v.saveImage();
+        });
+    }
+    getNow(){
+        let num = false;
+        this.nowLayers.forEach((v,k)=>{
+            num = k;
+        });
+        return num;
+    }
+    saveLayers(){
+        let nowNum = this.getNow();
+        if(this.backup.length>=30) this.backup.unshift();
+        this.backup.push(nowNum);
+        this.layers.get(nowNum).saveLayer();
+    }
+    revoke(){
+        if(!this.backup.length) return;
+        let k = this.backup.pop();
+        if(!this.layers.has(k)) return this.revoke();
+        this.layers.get(k).revoke();
+        this.activeLayer(this.backup.length-1>=0?this.backup[this.backup.length-1]:1);
+        this.drawLayers(true);
+        this.layers.get(k).saveImage();
+        if(!this.layers.get(k).backup.length&&k!==1){
+            this.layers.get(k).dom.remove();
+            this.layers.delete(k);
+        }
+    }
+    changePenState(){
+        this.layers.forEach((v,k)=>{
+            if(v.category==="pen"&&v.graphical.state) v.graphical.state = false;
         });
     }
 }

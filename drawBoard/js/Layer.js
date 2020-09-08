@@ -17,10 +17,11 @@ class Layer {
         this.layer.height = data.h;
         this.eraser = false;
         this.layerInit = false;
+        this.backup = [];
         this.init();
     }
 
-    init() {
+    init = ()=>{
         layers.addLayers(this, this.num);
         this.changeDomStyle();
         this.addHtml();
@@ -28,12 +29,12 @@ class Layer {
         this.createGraphical();
     }
 
-    addHtml() {
+    addHtml = ()=>{
         data.layers.prepend(this.dom);
         layers.activeLayer(this.num);
     }
 
-    setEvent() {
+    setEvent = ()=>{
         let that = this;
         this.dom.find('>div:last-child').click(() => {
             layers.activeLayer(this.num);
@@ -47,7 +48,7 @@ class Layer {
         });
     }
 
-    createGraphical() {
+    createGraphical = ()=>{
         switch (this.category) {
             case 'rect':
                 this.graphical = new Rect();
@@ -58,10 +59,18 @@ class Layer {
             case 'circular':
                 this.graphical = new Circular();
                 break;
+            case 'text':
+                this.text = data.text;
+                this.fontSize = data.fontSize;
+                this.graphical = new Text();
+                break;
+            case 'pen':
+                this.graphical = new Pen(this.layer.getContext('2d'),this.startX,this.startY,this.color);
+                break;
         }
-    }
+    };
 
-    draw() {
+    draw = ()=>{
         let layer_ctx = this.layer.getContext('2d');
         if(!this.layerInit){
             layer_ctx.clearRect(0,0,data.w,data.h);
@@ -78,6 +87,12 @@ class Layer {
                     break;
                 case 'circular':
                     this.graphical.draw(layer_ctx, this.startX, this.startY, Math.abs(w) > Math.abs(h) ? Math.abs(w) : Math.abs(h), this.stroke);
+                    break;
+                case 'text':
+                    this.graphical.draw(layer_ctx, this.startX, this.startY, this.fontSize, this.text, this.color);
+                    break;
+                case 'pen':
+                    this.graphical.draw(this.x, this.y);
                     break;
             }
             this.layerInit = true;
@@ -99,29 +114,46 @@ class Layer {
         this.ctx.drawImage(this.layer,0,0);
     }
 
-    changeXY(x, y) {
+    changeXY = (x, y)=>{
         this.x = x;
         this.y = y;
         this.layerInit = false;
     }
 
-    saveImage() {
+    saveImage = ()=>{
         this.layer.toBlob((blob) => {
             let url = URL.createObjectURL(blob);
             this.dom.find('.show-layer>img').attr('src', url);
         },'image/png',1);
     }
 
-    changeDomStyle(){
+    changeDomStyle = ()=>{
         let w = data.h>data.w?30/data.h*data.w:30;
         let h = data.w>data.h?30/data.w*data.h:30;
         this.dom.find('.show-layer').css({
             width: w,
             height: h,
         });
+    };
+
+    saveLayer(){
+        let layer = document.createElement('canvas');
+        layer.width = data.w;
+        layer.height = data.h;
+        let ctx = layer.getContext('2d');
+        ctx.drawImage(this.layer,0,0);
+        this.backup.push(layer);
     }
 
-    addEraser(x,y) {
+    revoke(){
+        this.layer = document.createElement('canvas');
+        this.layer.width = data.w;
+        this.layer.height = data.h;
+        let ctx = this.layer.getContext('2d');
+        ctx.drawImage(this.backup.pop(),0,0);
+    }
+
+    addEraser = (x,y)=>{
         this.eraser = {x, y};
     }
 }

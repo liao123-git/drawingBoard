@@ -209,6 +209,7 @@ form>div:last-child{
 }
 .layers{
     width: calc(10% + 200px);
+    max-height: 924px;
     padding: 1px;
 }
 .content{
@@ -322,11 +323,14 @@ form>div:last-child{
     height: 100%;
     object-fit: cover;
 }
-#followMouse{
+header input{
     width: 50px;
     padding: 1px 5px;
     border: 1px solid #7d7d7d;
     margin-left: 5px;
     background: #454545;
     font-size: 12px;
+}
+#board_c.text{
+    cursor: text;
 }

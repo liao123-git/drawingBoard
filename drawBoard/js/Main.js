@@ -5,6 +5,7 @@ class Main {
         this.stroke = false;
         this.grid = new Grid(10);
         this.gridState = false;
+        this.pen = false;
         this.init();
     }
 
@@ -48,17 +49,24 @@ class Main {
 
     setEvent() {
         let that = this;
-        /*$("#new").click(() => {
-            new Layer();
-        });*/
+        $("#new").click(() => {
+            layers.revoke();
+        });
         $("#delete").click(() => {
             layers.deleteLayers();
+            layers.drawLayers();
         });
         $("#color").change(function () {
             data.color = $(this).val();
         });
         $("#followMouse").change(function () {
             data.mouseWidth = parseInt($(this).val());
+        });
+        $("#text_content").change(function () {
+            data.text = $(this).val();
+        });
+        $("#font_size").change(function () {
+            data.fontSize = parseInt($(this).val());
         });
         $(".grid").click(function () {
             that.gridState = !that.gridState;
@@ -67,9 +75,10 @@ class Main {
             } else {
                 $(this).find('.check').removeClass('active');
             }
+            layers.drawLayers();
         });
         $(".tools li:nth-last-child(n+2)").click(function () {
-            if(that.state===$(this)[0].id){
+            if (that.state === $(this)[0].id) {
                 $(this).removeClass('active').siblings().removeClass('active');
                 return that.state = false;
             }
@@ -99,8 +108,9 @@ class Main {
         let graphical = false;
         data.canvas.mousedown(() => {
             if (!this.state) return;
+            if(this.pen) return this.pen = false;
             this.position = {x: event.layerX, y: event.layerY};
-            if(this.state==='rect'||this.state==='line'||this.state==='circular'){
+            this.switchState(this.state, () => {
                 layer = new Layer({
                     startX: this.position.x,
                     startY: this.position.y,
@@ -108,39 +118,81 @@ class Main {
                     stroke: this.stroke,
                     category: this.state,
                 });
-            }if(this.state==='eraser') layers.addEraser(this.position.x,this.position.y);
+                layers.saveLayers();
+            }, () => {
+                if (!layers.getNow()) return;
+                layers.addEraser(this.position.x, this.position.y);
+                layers.saveLayers();
+            });
+            layers.drawLayers();
         });
         data.canvas.mousemove(() => {
             let x = event.layerX;
             let y = event.layerY;
-            if (!this.state||!this.position){
-                this.followMouse(x,y,false);
-            }else{
-                if(this.state==='eraser') layers.addEraser(x,y);
-                if(this.state==='rect'||this.state==='line'||this.state==='circular') layer.changeXY(x, y);
-                this.followMouse(x,y);
+            if (!this.state || !this.position) {
+                this.followMouse(x, y, false);
+            } else {
+                this.switchState(this.state, () => {
+                    layer.changeXY(x, y);
+                }, () => {
+                    if (!layers.getNow()) return;
+                    layers.addEraser(x, y);
+                });
+                this.followMouse(x, y);
             }
         });
         data.canvas.mouseup(() => {
+            if(!this.position) return;
             let x = event.layerX;
             let y = event.layerY;
-            if (x === this.position.x && y === this.position.y) {
-                if(this.state==='rect'||this.state==='line'||this.state==='circular') layers.deleteLayers();
-                layers.deleteNum();
-            }
+            this.switchState(this.state, () => {
+                if(this.state === "pen"){
+                    layer.graphical.setEvent();
+                    return;
+                }
+                if (x === this.position.x && y === this.position.y && this.state !== 'text') {
+                    layers.deleteLayers();
+                    layers.deleteNum();
+                }
+            });
+            layers.showImage();
             this.position = false;
             layer = null;
             graphical = null;
-            layers.showImage();
         });
     }
 
-    followMouse(x,y){
+    followMouse(x, y) {
         $("#x").html(x);
         $("#y").html(y);
         data.mousePos.x = x;
         data.mousePos.y = y;
         layers.drawLayers();
+    }
+
+    switchState(state, case1, case2 = () => {
+    }, case3 = () => {
+    }) {
+        switch (state) {
+            case "rect":
+                case1();
+                break;
+            case "line":
+                case1();
+                break;
+            case "circular":
+                case1();
+                break;
+            case "eraser":
+                case2();
+                break;
+            case "text":
+                case1();
+                break;
+            case "pen":
+                case1();
+                break;
+        }
     }
 
     monitorWindow() {
@@ -162,8 +214,19 @@ class Main {
 
     updateHtml() {
         let stroke = $(".stroke");
-        if (this.state==='rect'||this.state==='line'||this.state==='circular') stroke.show();
+        $(".layers").css('max-height', `${$(window).height() - 45}px`);
+        if(this.state!=="pen") layers.changePenState();
+        if (this.state === 'rect' || this.state === 'line' || this.state === 'circular') stroke.show();
         else stroke.hide();
+        if (this.state === "text") {
+            $("#board_c").addClass('text');
+            $(".text_content").show();
+            $(".font_size").show();
+        } else {
+            $("#board_c").removeClass('text');
+            $(".text_content").hide();
+            $(".font_size").hide();
+        }
     }
 }
 

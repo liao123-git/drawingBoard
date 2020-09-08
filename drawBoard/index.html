@@ -13,6 +13,8 @@
     <script src="js/Line.js"></script>
     <script src="js/Circular.js"></script>
     <script src="js/Grid.js"></script>
+    <script src="js/Text.js"></script>
+    <script src="js/Pen.js"></script>
 </head>
 <body class="bg">
     <header class="bg border">
@@ -23,6 +25,8 @@
         <div class="grid hover" title="网格工具"><div class="check"></div><span>Grid</span></div>
         <div class="stroke hover" style="display: none" title="描边"><div class="check"></div> <span>Stroke</span></div>
         <div class="circular_eraser hover" title="圆形笔刷"><div class="check"></div><span>Circular</span></div>
+        <div class="text_content hover" title="文字内容" style="display: none"><span>Text: </span><input type="text" id="text_content" value="Lorem Ipsum"></div>
+        <div class="font_size hover" title="文字大小" style="display: none"><span>Font size: </span><input type="number" id="font_size" value="16" max="99" min="8"></div>
         <div class="export hover" title="导出"><span>Export</span></div>
     </header>
     <main>
@@ -41,10 +45,10 @@
                 <li class="eraser hover" id="eraser" title="橡皮擦工具">
                     <img src="images/eraser.png" alt="">
                 </li>
-                <li class="text hover" title="文字工具">
+                <li class="text hover" id="text" title="文字工具">
                     <img src="images/text.png" alt="">
                 </li>
-                <li class="pen hover" title="钢笔工具">
+                <li class="pen hover" id="pen" title="钢笔工具">
                     <img src="images/pen.png" alt="">
                 </li>
                 <li class="magnifier hover" title="放大镜工具">

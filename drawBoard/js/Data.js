@@ -1,5 +1,5 @@
 class Data {
-    constructor(){
+    constructor() {
         this.w = 0;
         this.h = 0;
         this.dom = $("#board");
@@ -10,9 +10,13 @@ class Data {
         this.color = "black";
         this.eraser = false;
         this.mouseWidth = 20;
-        this.mousePos = {x:0,y:0};
+        this.text = "Lorem Ipsum";
+        this.fontSize = 16;
+        this.mousePos = {x: 0, y: 0};
     }
+
 }
-$(()=>{
+
+$(() => {
     window.data = new Data();
 });
