@@ -9,14 +9,16 @@ class Data {
         this.image = $(`#image`);
         this.color = "black";
         this.eraser = false;
+        this.mouseCircule = false;
         this.mouseWidth = 20;
         this.text = "Lorem Ipsum";
         this.fontSize = 16;
         this.mousePos = {x: 0, y: 0};
+        this.size = 100;
+        this.side = 7;
+        this.ctrl = false;
     }
-
 }
-
 $(() => {
     window.data = new Data();
 });

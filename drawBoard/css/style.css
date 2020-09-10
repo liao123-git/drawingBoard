@@ -334,3 +334,12 @@ header input{
 #board_c.text{
     cursor: text;
 }
+#board_c.crosshair{
+    cursor: crosshair;
+}
+#board_c.zoom-in{
+    cursor: zoom-in;
+}
+#board_c.zoom-out{
+    cursor: zoom-in;
+}

@@ -51,7 +51,7 @@ class Layers {
             }
         });
         if(main.gridState) main.grid.draw();
-        this.drawMouse();
+        if(data.eraser) this.drawMouse();
     }
     addEraser(x,y){
         this.nowLayers.forEach((v,k)=>{
@@ -66,7 +66,7 @@ class Layers {
         let ctx = data.canvas[0].getContext('2d');
         ctx.strokeStyle = 'red';
         ctx.beginPath();
-        if(data.eraser) ctx.arc(x,y,w/2,0,Math.PI*2,false);
+        if(data.mouseCircule) ctx.arc(x,y,w/2,0,Math.PI*2,false);
         else ctx.rect(x-w/2,y-w/2,w,w);
         ctx.stroke();
         ctx.closePath();
@@ -95,16 +95,17 @@ class Layers {
         if(!this.layers.has(k)) return this.revoke();
         this.layers.get(k).revoke();
         this.activeLayer(this.backup.length-1>=0?this.backup[this.backup.length-1]:1);
-        this.drawLayers(true);
+        this.drawLayers();
         this.layers.get(k).saveImage();
         if(!this.layers.get(k).backup.length&&k!==1){
             this.layers.get(k).dom.remove();
             this.layers.delete(k);
+            main.pen = false;
         }
     }
     changePenState(){
         this.layers.forEach((v,k)=>{
-            if(v.category==="pen"&&v.graphical.state) v.graphical.state = false;
+            if(v.category==="pen"&&v.graphical.state) v.graphical.changeState();
         });
     }
 }

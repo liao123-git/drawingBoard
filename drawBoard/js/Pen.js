@@ -27,7 +27,6 @@ class Pen {
         if(!this.state) return;
         this.points.forEach((v)=>{
             this.ctx.fillStyle = 'white';
-            this.ctx.strokeStyle = 'black';
             this.ctx.beginPath();
             this.ctx.arc(v.x,v.y,5,0,Math.PI*2,true);
             this.ctx.fill();
@@ -37,12 +36,14 @@ class Pen {
     setEvent(){
         this.init = false;
         data.canvas[0].onmousedown = ()=>{
+            console.log(123);
             let click = false;
             this.points.forEach((v,k)=>{
                 this.ctx.beginPath();
                 this.ctx.arc(v.x,v.y,5,0,Math.PI*2,true);
 
                 if(this.ctx.isPointInPath(event.layerX,event.layerY)){
+                    layers.saveLayers();
                     v.x = event.layerX;
                     v.y = event.layerY;
                     this.point = k;
@@ -67,5 +68,7 @@ class Pen {
         data.canvas[0].onmouseup = ()=>{
             this.point = false;
         };
+    }
+    changeState(){
     }
 }
