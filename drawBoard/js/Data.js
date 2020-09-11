@@ -6,6 +6,7 @@ class Data {
         this.domBg = $(".contentBg");
         this.layers = $(".scroll ul");
         this.canvas = $(`#board_c`);
+        this.restore = document.createElement("canvas");
         this.image = $(`#image`);
         this.color = "black";
         this.eraser = false;
@@ -14,8 +15,7 @@ class Data {
         this.text = "Lorem Ipsum";
         this.fontSize = 16;
         this.mousePos = {x: 0, y: 0};
-        this.size = 100;
-        this.side = 7;
+        this.side = 3;
         this.ctrl = false;
     }
 }

@@ -11,6 +11,7 @@ class Pen {
         main.pen = true;
     }
     update(x,y){
+        //三次方贝塞尔曲线的四个点，我的钢笔的顺序是左上，左下，右上，右下
         this.points[0] = {x:this.startX,y:this.startY};
         this.points[1] = {x:this.startX,y};
         this.points[2] = {x,y:this.startY};
@@ -24,6 +25,8 @@ class Pen {
         this.ctx.moveTo(this.points[0].x,this.points[0].y);
         this.ctx.bezierCurveTo(this.points[1].x,this.points[1].y,this.points[2].x,this.points[2].y,this.points[3].x,this.points[3].y);
         this.ctx.stroke();
+
+        //如果再编辑状态下需要画出四个操作点
         if(!this.state) return;
         this.points.forEach((v)=>{
             this.ctx.fillStyle = 'white';
@@ -34,10 +37,10 @@ class Pen {
         });
     }
     setEvent(){
+        data.canvas.addClass("pointer");
         this.init = false;
         data.canvas[0].onmousedown = ()=>{
-            console.log(123);
-            let click = false;
+            if(!this.state) return;
             this.points.forEach((v,k)=>{
                 this.ctx.beginPath();
                 this.ctx.arc(v.x,v.y,5,0,Math.PI*2,true);
@@ -47,18 +50,18 @@ class Pen {
                     v.x = event.layerX;
                     v.y = event.layerY;
                     this.point = k;
-                    click = true;
                     main.pen = true;
                 }
             });
-            if(!click){
+            if(!main.pen){
+                data.canvas.removeClass();
                 this.state = false;
                 this.draw();
                 layers.drawLayers();
             }
         };
         data.canvas[0].onmousemove = ()=>{
-            if(this.point===false) return;
+            if(this.point===false||!this.state) return;
             this.points[this.point].x = event.layerX;
             this.points[this.point].y = event.layerY;
             main.pen = true;
@@ -66,9 +69,7 @@ class Pen {
             layers.drawLayers();
         };
         data.canvas[0].onmouseup = ()=>{
-            this.point = false;
+            if(this.state) this.point = false;
         };
-    }
-    changeState(){
     }
 }

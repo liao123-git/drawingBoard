@@ -16,19 +16,22 @@
     <script src="js/Text.js"></script>
     <script src="js/Pen.js"></script>
     <script src="js/Polygon.js"></script>
+    <script src="js/Magnifier.js"></script>
+    <script src="js/Tools.js"></script>
 </head>
 <body class="bg">
     <header class="bg border">
         <img src="images/decorate.png" alt="" class="decorate">
         <div class="readout" title="坐标"><span>(<span id="x">0</span>,<span id="y">0</span>)</span></div>
-        <div class="rotate hover" title="旋转"><div class="check"></div> <span>Rotate</span></div>
         <div class="grid hover" title="网格工具"><div class="check"></div><span>Grid</span></div>
+        <div class="rotate hover" title="旋转" style="display: none"><div class="check"></div> <span>Rotate</span></div>
         <div class="stroke hover" style="display: none" title="描边"><div class="check"></div> <span>Stroke</span></div>
         <div class="mouse hover" title="光标大小" style="display: none"><span>Mouse size: </span><input type="number" id="followMouse" value="20" max="99" min="1"></div>
         <div class="circular_eraser hover" title="圆形笔刷" style="display: none"><div class="check"></div><span>Circular</span></div>
         <div class="text_content hover" title="文字内容" style="display: none"><span>Text: </span><input type="text" id="text_content" value="Lorem Ipsum"></div>
         <div class="font_size hover" title="文字大小" style="display: none"><span>Font size: </span><input type="number" id="font_size" value="16" max="99" min="8"></div>
         <div class="side hover" title="边数" style="display: none"><span>Polygon side: </span><input type="number" id="side" value="3" max="99" min="3"></div>
+        <div class="restore hover" title="还原" id="restore" style="display: none"><span>Restore</span></div>
         <div class="export hover" title="导出"><span>Export</span></div>
     </header>
     <main>
@@ -99,6 +102,7 @@
                 <div class="content" id="board">
                     <canvas id="image" width="0" height="0"></canvas>
                     <canvas id="board_c" width="0" height="0"></canvas>
+                    <div id='mSelect'></div>
                 </div>
             </div>
         </article>

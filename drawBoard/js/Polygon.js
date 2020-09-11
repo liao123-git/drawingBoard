@@ -34,7 +34,7 @@ class Polygon {
         return points;
     }
     setEvent(){
-        main.pen = true;
+        /*main.pen = true;
         data.canvas[0].onmousedown = ()=>{
             this.ctx.beginPath();
             this.points.forEach((point,k)=>{
@@ -43,8 +43,7 @@ class Polygon {
             });
             if(this.ctx.isPointInPath(event.layerX,event.layerY)){
                 main.pen = true;
-                console.log(123);
             }
-        };
+        };*/
     }
 }
