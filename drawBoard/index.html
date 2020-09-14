@@ -32,6 +32,14 @@
         <div class="font_size hover" title="文字大小" style="display: none"><span>Font size: </span><input type="number" id="font_size" value="16" max="99" min="8"></div>
         <div class="side hover" title="边数" style="display: none"><span>Polygon side: </span><input type="number" id="side" value="3" max="99" min="3"></div>
         <div class="restore hover" title="还原" id="restore" style="display: none"><span>Restore</span></div>
+        <div class="intersection hover" title="交集、补集、并集" style="display: none">
+            <select id="intersection">
+                <option value="source-over" selected>New Layer</option>
+                <option value="source-in">Intersection</option>
+                <option value="xor">Exclude overlapping</option>
+                <option value="destination-over">Combine</option>
+            </select>
+        </div>
         <div class="export hover" title="导出"><span>Export</span></div>
     </header>
     <main>
@@ -58,9 +66,6 @@
                 </li>
                 <li class="magnifier hover" id="magnifier" title="放大镜工具">
                     <img src="images/magnifier.png" alt="">
-                </li>
-                <li class="intersection hover" title="交集、补集、并集">
-                    <img src="images/intersection.png" alt="">
                 </li>
                 <li class="polygon hover" id="polygon" title="多边形">
                     <img src="images/polygon.png" alt="">

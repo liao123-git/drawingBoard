@@ -54,7 +54,7 @@ class Pen {
                 }
             });
             if(!main.pen){
-                data.canvas.removeClass();
+                data.canvas.removeClass().addClass("crosshair");
                 this.state = false;
                 this.draw();
                 layers.drawLayers();
@@ -72,4 +72,5 @@ class Pen {
             if(this.state) this.point = false;
         };
     }
+
 }

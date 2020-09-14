@@ -5,6 +5,7 @@ class Main {
         this.stroke = false;
         this.grid = new Grid(10);
         this.gridState = false;
+        this.intersection = "source-over";
         this.pen = false;
         this.revoke = true;
         this.stateList = [];
@@ -54,6 +55,7 @@ class Main {
     createStateList(){
         //方便之后切换工具
         let stroke = $(".stroke");
+        let intersection = $(".intersection");
         this.stateList = [
             {
                 category:"line",
@@ -78,17 +80,17 @@ class Main {
             {
                 category:"circular",
                 hover:"crosshair",
-                dom:[stroke],
+                dom:[stroke,intersection],
             },
             {
                 category:"rect",
                 hover:"crosshair",
-                dom:[stroke],
+                dom:[stroke,intersection],
             },
             {
                 category:"polygon",
                 hover:"crosshair",
-                dom:[stroke,$(".side")],
+                dom:[stroke,$(".side"),intersection],
             },
             {
                 category:"text",
@@ -165,11 +167,20 @@ class Main {
             ctx.drawImage(data.restore,0,0);
             this.magnifier.state = false;
         });
+        //交集
+        $("#intersection").change(function(){
+            that.intersection = $(this).val();
+        });
+        //导出
+        $(".export").click(()=>{
+            layers.export();
+        });
         //各个工具
         $(".tools li:nth-last-child(n+2)").click(function () {
             that.activeTool($(this));
             if($(this)[0].id==="eraser") data.eraser = true;
             else data.eraser = false;
+            layers.changePenState();
         });
         //是否描边
         $(".stroke").click(function () {
@@ -223,6 +234,9 @@ class Main {
                     break;
                 case 85: //r 矩形工具
                     this.activeTool($("#polygon"));
+                    break;
+                case 77: //m 橡皮擦工具
+                    this.activeTool($("#magnifier"));
                     break;
             }
         });
@@ -319,6 +333,7 @@ class Main {
                     layers.deleteLayers();
                     layers.deleteNum();
                 }
+                if(this.intersection!=="source-over"&&this.position) layers.intersection();
             },false,()=>{
                 this.magnifier.changState();
             });
@@ -390,11 +405,14 @@ class Main {
 
             //改变状态栏
             for (let j=0;j<item.dom.length;j++){
-                if(this.category===item.category){
-                    item.dom[j].show();
-                }else{
-                    item.dom[j].hide();
-                }
+                item.dom[j].hide();
+            }
+        }
+
+        for (let i=0;i<this.stateList.length;i++){
+            let item = this.stateList[i];
+            for (let j=0;j<item.dom.length;j++){
+                if(this.category===item.category) item.dom[j].show();
             }
         }
     }

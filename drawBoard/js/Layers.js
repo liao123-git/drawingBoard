@@ -129,4 +129,72 @@ class Layers {
             main.pen = false;
         }
     }
+    changePenState(){
+        main.pen = false;
+        this.layers.forEach((v)=>{
+            if(v.category==="pen"&&v.graphical.state===true) v.pen();
+        });
+        layers.drawLayers();
+    }
+    intersection(){
+        if([...this.nowLayers].length>=2){
+            let show = new Map();
+            if(main.intersection!=="source-in"){
+                this.layers.forEach((v,k)=>{
+                    show.set(k,v.show);
+                    v.show = false;
+                });
+            }
+            this.nowLayers.forEach((v,k)=>{
+                v.intersection = true;
+                v.show = true;
+                this.layers.delete(k);
+                this.layers.set(k,v);
+            });
+            this.drawLayers();
+            let layer = document.createElement('canvas');
+            layer.width = data.w;
+            layer.height = data.h;
+            layer.getContext("2d").drawImage(data.canvas[0],0,0);
+            this.nowLayers.forEach((v,k)=>{
+                if(layer){
+                    v.layer.getContext("2d").clearRect(0,0,v.layer.width,v.layer.height);
+                    v.layer.getContext("2d").drawImage(layer,0,0);
+                    layer = false;
+                    v.intersection = false;
+                }else{
+                    this.layers.delete(k);
+                    this.nowLayers.delete(k);
+                }
+            });
+            if(main.intersection!=="source-in") {
+                this.layers.forEach((v, k) => {
+                    v.show = show.get(k);
+                });
+            }
+            this.drawLayers();
+        }
+    }
+    export(){
+        let mState = main.magnifier.state;
+        let gState = main.gridState;
+        let eState = data.eraser;
+        main.magnifier.state = false;
+        main.gridState = false;
+        data.eraser = false;
+        this.changePenState();
+        this.drawLayers();
+        main.magnifier.state = mState;
+        main.gridState = gState;
+        data.eraser = eState;
+        data.canvas[0].toBlob((blob) => {
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.download = "Image";
+            a.href = url;
+            a.click();
+            URL.revokeObjectURL(a.href);
+            this.drawLayers();
+        },'image/png',1);
+    }
 }

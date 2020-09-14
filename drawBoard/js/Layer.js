@@ -17,6 +17,7 @@ class Layer {
         this.layer.height = data.h;
         this.eraser = false;
         this.layerInit = false;
+        this.intersection = false;
         this.backup = [];
         this.init();
     }
@@ -39,8 +40,8 @@ class Layer {
     };
 
     addHtml(){
-        data.layers.prepend(this.dom);
-        layers.activeLayer(this.num);//选中图层
+        if(main.intersection==="source-over") data.layers.prepend(this.dom);
+        layers.activeLayer(this.num,main.intersection!=="source-over");//选中图层
     };
 
     setEvent(){
@@ -133,6 +134,8 @@ class Layer {
                 this.eraser = false;
             }
         }
+        if(this.intersection) this.ctx.globalCompositeOperation = main.intersection;
+        else this.ctx.globalCompositeOperation = "source-over"
         if(this.show) this.ctx.drawImage(this.layer,0,0);
     };
 
@@ -172,5 +175,13 @@ class Layer {
     addEraser(x,y){
         //下次渲染画布的时候把这个区域清空
         this.eraser = {x, y};
+    }
+
+    pen(){
+        let layer_ctx = this.layer.getContext('2d');
+        layer_ctx.clearRect(0,0,data.w,data.h);
+        this.graphical.state = false;
+        this.graphical.draw();
+        this.ctx.drawImage(this.layer,0,0);
     }
 }
